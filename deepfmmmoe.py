@@ -89,7 +89,7 @@ if __name__ == "__main__":
     #                     batch_size=4096, epochs=20, verbose=1, validation_split=0.1, callbacks=[early_stopping])
     history = model.fit(train_model_input, {"finish": train["finish"].values, "like": train["like"].values},
                         batch_size=4096, epochs=10, verbose=1, validation_split=0.2,
-                        callbacks=[EarlyStopping(monitor='val_finish_auc', patience=2, verbose=1
+                        callbacks=[EarlyStopping(monitor='val_finish_auroc', patience=2, verbose=1
                                                  )])
 
     pred_ans = model.predict(test_model_input, batch_size=2 ** 14)
