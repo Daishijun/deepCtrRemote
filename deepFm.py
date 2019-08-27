@@ -54,7 +54,10 @@ feature_names = get_fixlen_feature_names(linear_feature_columns + dnn_feature_co
 
 train_indexs = data[data['date'] < 20190708].index
 
-test_indexs = data[data['date'] == 20190708].index
+
+RIGIONID = 0
+test_indexs = data[data['date'] == 20190708 and data['u_region_id']==RIGIONID].index
+
 
 train, test = data.loc[train_indexs], data.loc[test_indexs]
 
@@ -62,10 +65,10 @@ train_model_input = [train[name] for name in feature_names]
 
 test_model_input = [test[name] for name in feature_names]
 
-RIGIONID = 0
-test_model_input = test_model_input[test_model_input['u_region_id']==RIGIONID]
 
-test = test[test['u_region_id'] == RIGIONID]
+
+
+
 
 
 #model = xDeepFM(linear_feature_columns, dnn_feature_columns, task='binary')
