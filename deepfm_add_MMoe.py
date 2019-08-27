@@ -59,10 +59,10 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
     #                                 seed=seed, prefix='linear')
 
     linear_logit_finish = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
-                                    seed=seed, prefix='linear')
+                                    seed=seed, prefix='linear_finish')
 
     linear_logit_like = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
-                                    seed=seed, prefix='linear')
+                                    seed=seed, prefix='linear_like')
     ## 线性变换层，没有激活函数
 
     fm_input = concat_fun(sparse_embedding_list, axis=1)
