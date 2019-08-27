@@ -73,9 +73,14 @@ if __name__ == "__main__":
     def auroc(y_true, y_pred):
         return tf.numpy_function(roc_auc_score, (y_true, y_pred), tf.double)
     model.compile(Adam(lr=0.0001), "binary_crossentropy", metrics=[auroc], loss_weights=[0.6,0.4],)
-    early_stopping = EarlyStopping(monitor='val_loss', patience=2, verbose=1)
-    history = model.fit(train_model_input, {"finish":train["finish"].values, "like":train["like"].values},
-                        batch_size=4096, epochs=20, verbose=1, validation_split=0.1, callbacks=[early_stopping])
+    # early_stopping = EarlyStopping(monitor='val_loss', patience=2, verbose=1)
+    # history = model.fit(train_model_input, {"finish":train["finish"].values, "like":train["like"].values},
+    #                     batch_size=4096, epochs=20, verbose=1, validation_split=0.1, callbacks=[early_stopping])
+    history = model.fit(train_model_input, {"finish": train["finish"].values, "like": train["like"].values},
+                        batch_size=4096, epochs=10, verbose=1, validation_split=0.2,
+                        callbacks=[EarlyStopping(monitor='val_finish_auc', patience=2, verbose=1
+                                                 )])
+
     pred_ans = model.predict(test_model_input, batch_size=2 ** 14)
     for i in range(len(target)):
         print("=={}==".format(target[i]))
