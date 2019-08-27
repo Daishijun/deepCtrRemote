@@ -87,12 +87,12 @@ def auc(y_true, y_pred):
 model = DeepFM(linear_feature_columns, dnn_feature_columns, task='binary',use_fm=True,
                dnn_hidden_units=(128,128), dnn_dropout=0)
 
-try:
-    model = multi_gpu_model(model, gpus=2)
-    print("Training using multiple GPUs..")
-except Exception as e:
-    print(e)
-    print("Training using single GPU or CPU..")
+# try:
+#     model = multi_gpu_model(model, gpus=2)
+#     print("Training using multiple GPUs..")
+# except Exception as e:
+#     print(e)
+#     print("Training using single GPU or CPU..")
 
 model.compile(Adam(lr=0.0001), "binary_crossentropy", metrics=['binary_crossentropy', auc], loss_weights=[0.6,0.4])
 
