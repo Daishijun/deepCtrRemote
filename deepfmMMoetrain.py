@@ -62,7 +62,7 @@ train_indexs = data[data['date'] < 20190708].index
 
 
 RIGIONID = 0
-test_indexs = data[data['date'] == 20190708 and data['u_region_id']==RIGIONID].index
+test_indexs = data[(data['date'] == 20190708) & (data['u_region_id']==RIGIONID)].index
 
 
 train, test = data.loc[train_indexs], data.loc[test_indexs]
