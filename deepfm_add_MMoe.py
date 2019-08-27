@@ -55,14 +55,23 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
                                                                          seed)
     ## [feature_1对应的embedding层，下连接对应feature1的Input[1,]层,...], [feature_1对应的Input[1,]层,...]
 
-    linear_logit = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
+    # linear_logit = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
+    #                                 seed=seed, prefix='linear')
+
+    linear_logit_finish = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
+                                    seed=seed, prefix='linear')
+
+    linear_logit_like = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
                                     seed=seed, prefix='linear')
     ## 线性变换层，没有激活函数
 
     fm_input = concat_fun(sparse_embedding_list, axis=1)
     ## 稀疏embedding层concate在一起
 
-    fm_logit = FM()(fm_input)
+    # fm_logit = FM()(fm_input)
+    fm_logit_finish = FM()(fm_input)
+    fm_logit_like = FM()(fm_input)
+
     ## FM的二次项部分输出，不包含一次项和bias
 
     dnn_input = combined_dnn_input(sparse_embedding_list, dense_value_list)
@@ -101,12 +110,12 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
     # else:
     #     raise NotImplementedError
 
-    finish_logit = tf.keras.layers.add([linear_logit, fm_logit, finish_logit])
-    like_logit = tf.keras.layers.add([linear_logit, fm_logit, like_logit])
+    finish_logit = tf.keras.layers.add([linear_logit_finish, fm_logit_finish, finish_logit])
+    like_logit = tf.keras.layers.add([linear_logit_like, fm_logit_like, like_logit])
 
 
 
-    output_finish = PredictionLayer('binary', name='finish_output')(finish_logit)
-    output_like = PredictionLayer('binary', name='like_output')(like_logit)
+    output_finish = PredictionLayer('binary', name='finish')(finish_logit)
+    output_like = PredictionLayer('binary', name='like')(like_logit)
     model = tf.keras.models.Model(inputs=inputs_list, outputs=[output_finish, output_like])
     return model
