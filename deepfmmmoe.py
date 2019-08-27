@@ -10,7 +10,8 @@ from tensorflow.python.keras.callbacks import EarlyStopping
 import numpy as np
 import tensorflow as tf
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 
 if __name__ == "__main__":
     DATA_PATH = '/opt/ByteCamp/'
