@@ -20,7 +20,8 @@ from tensorflow.python.keras.optimizers import Adam
 # from tensorfl import Adam
 from tensorflow.python.keras.callbacks import EarlyStopping
 from tensorflow.python.keras.utils import multi_gpu_model
-from deepfm_add_MMoe import DeepFM
+# from deepfm_add_MMoe import DeepFM
+from train2modelmmoe import DeepFMmmoe
 from tensorflow.python.keras.utils import plot_model
 
 
@@ -86,8 +87,12 @@ def auc(y_true, y_pred):
 
 
 
-model = DeepFM(linear_feature_columns, dnn_feature_columns, task='binary',use_fm=True,
-               dnn_hidden_units=(128,256), dnn_dropout=0)
+# model = DeepFM(linear_feature_columns, dnn_feature_columns, task='binary',use_fm=True,
+#                dnn_hidden_units=(128,256), dnn_dropout=0)
+
+model = DeepFMmmoe(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm=True, dnn_hidden_units=(128, 128,),
+           l2_reg_linear=0.00001, l2_reg_embedding=0.00001, l2_reg_dnn=0, init_std=0.0001, seed=1024, dnn_dropout=0,
+           dnn_activation='relu', dnn_use_bn=False, task='binary')
 
 # try:
 #     model = multi_gpu_model(model, gpus=2)
