@@ -74,7 +74,7 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
                   dnn_use_bn, seed)(dnn_input)
     mmoe_out = MMoE(units=8, num_experts=16, num_tasks=2)(dnn_out)
 
-    finish_in, like_in = mmoe_out
+    [finish_in, like_in]= mmoe_out
 
 
     finish_out_1 = Dense(128, dnn_activation, kernel_regularizer=l2(l2_reg_dnn))(finish_in)
