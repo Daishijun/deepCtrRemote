@@ -82,8 +82,8 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
     finish_logit = tf.keras.layers.Dense(1,use_bias=False, activation=None )(finish_out)
 
     like_out_1 = Dense(128, dnn_activation, kernel_regularizer=l2(l2_reg_dnn))(like_in)
-    like_out = Dense(128, dnn_activation, kernel_regularizer=l2(l2_reg_dnn))(like_out_1)
-    like_logit = tf.keras.layers.Dense(1, use_bias=False, activation=None)(like_out)
+    # like_out = Dense(128, dnn_activation, kernel_regularizer=l2(l2_reg_dnn))(like_out_1)
+    like_logit = tf.keras.layers.Dense(1, use_bias=False, activation=None)(like_out_1)
 
 
     dnn_logit = tf.keras.layers.Dense(
