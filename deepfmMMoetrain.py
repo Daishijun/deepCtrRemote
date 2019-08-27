@@ -85,7 +85,7 @@ def auc(y_true, y_pred):
 
 
 model = DeepFM(linear_feature_columns, dnn_feature_columns, task='binary',use_fm=True,
-               dnn_hidden_units=(128,128), dnn_dropout=0)
+               dnn_hidden_units=(128,256), dnn_dropout=0)
 
 # try:
 #     model = multi_gpu_model(model, gpus=2)
@@ -101,7 +101,7 @@ model.summary()
 plot_model(model, to_file='deepfmMMoEmodel.png', show_shapes=True, show_layer_names=True)
 
 history = model.fit(train_model_input, {"finish_output":train["finish"].values, "like_output":train["like"].values},
-                    batch_size=4096, epochs=10, verbose=1, validation_split=0.2,
+                    batch_size=2048, epochs=10, verbose=1, validation_split=0.2,
                     callbacks = [EarlyStopping(monitor='val_finish_output_auc', patience=2, verbose=1
                     )])
 
