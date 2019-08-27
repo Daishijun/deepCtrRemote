@@ -101,8 +101,8 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
     # else:
     #     raise NotImplementedError
 
-    # finish_logit = tf.keras.layers.add([linear_logit, fm_logit, finish_logit])
-    # like_logit = tf.keras.layers.add([linear_logit, fm_logit, like_logit])
+    finish_logit = tf.keras.layers.add([linear_logit, fm_logit, finish_logit])
+    like_logit = tf.keras.layers.add([linear_logit, fm_logit, like_logit])
 
 
 
