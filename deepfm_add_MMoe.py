@@ -18,7 +18,8 @@ from tensorflow.python.keras.layers import Dense
 from tensorflow.python.keras.regularizers import l2
 
 
-from mmoe import MMoE
+# from mmoe import MMoE
+from mymmoe import MMoE
 
 def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm=True, only_dnn=False, dnn_hidden_units=(128, 128),
            l2_reg_linear=0.00001, l2_reg_embedding=0.00001, l2_reg_dnn=0, init_std=0.0001, seed=1024, dnn_dropout=0,
