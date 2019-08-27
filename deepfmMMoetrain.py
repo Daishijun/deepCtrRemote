@@ -37,8 +37,8 @@ dense_features = ['duration', 'generate_time']
 data[sparse_features] = data[sparse_features].fillna('-1', )
 data[dense_features] = data[dense_features].fillna(0,)
 
-# target = ['finish', 'like']
-target = ['finish']
+target = ['finish', 'like']
+# target = ['finish']
 
 data['generate_time'] %= 60 * 60 * 24
 
