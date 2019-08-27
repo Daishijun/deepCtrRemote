@@ -21,6 +21,8 @@ from tensorflow.python.keras.optimizers import Adam
 from tensorflow.python.keras.callbacks import EarlyStopping
 from tensorflow.python.keras.utils import multi_gpu_model
 from deepfm_add_MMoe import DeepFM
+from tensorflow.python.keras.utils import plot_model
+
 
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"
@@ -95,6 +97,8 @@ except Exception as e:
 model.compile(Adam(lr=0.0001), "binary_crossentropy", metrics=['binary_crossentropy', auc], loss_weights=[0.6,0.4])
 
 model.summary()
+
+plot_model(model, to_file='deepfmMMoEmodel.png', show_shapes=True, show_layer_names=True)
 
 history = model.fit(train_model_input, {"finish_output":train["finish"].values, "like_output":train["like"].values},
                     batch_size=4096, epochs=10, verbose=1, validation_split=0.2,
