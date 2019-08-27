@@ -72,6 +72,16 @@ if __name__ == "__main__":
     model.summary()
     def auroc(y_true, y_pred):
         return tf.numpy_function(roc_auc_score, (y_true, y_pred), tf.double)
+
+
+    from tensorflow.python.keras import backend as K
+
+
+    def auc(y_true, y_pred):
+        auc = tf.metrics.auc(y_true, y_pred)[1]
+        K.get_session().run(tf.local_variables_initializer())
+        return auc
+
     model.compile(Adam(lr=0.0001), "binary_crossentropy", metrics=[auroc], loss_weights=[0.6,0.4],)
     # early_stopping = EarlyStopping(monitor='val_loss', patience=2, verbose=1)
     # history = model.fit(train_model_input, {"finish":train["finish"].values, "like":train["like"].values},
