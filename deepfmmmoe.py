@@ -71,7 +71,7 @@ if __name__ == "__main__":
     #     dnn_activation='relu', task='binary')
     model.summary()
     def auroc(y_true, y_pred):
-        return tf.py_func(roc_auc_score, (y_true, y_pred), tf.double)
+        return tf.numpy_function(roc_auc_score, (y_true, y_pred), tf.double)
     model.compile(Adam(lr=0.0001), "binary_crossentropy", metrics=[auroc], loss_weights=[0.6,0.4],)
     early_stopping = EarlyStopping(monitor='val_loss', patience=2, verbose=1)
     history = model.fit(train_model_input, {"finish":train["finish"].values, "like":train["like"].values},
