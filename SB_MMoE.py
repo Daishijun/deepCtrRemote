@@ -33,16 +33,22 @@ config.gpu_options.allow_growth = True
 
 session = tf.Session(config=config)
 
-data = pd.read_csv('./data/final_track2_train.txt', sep='\t', names=[
-        'uid', 'user_city', 'item_id', 'author_id', 'item_city', 'channel', 'finish', 'like', 'music_id', 'device', 'time', 'duration_time'])
-sparse_features = ['uid', 'user_city', 'item_id', 'author_id', 'item_city', 'channel', 'music_id', 'device']
-dense_features = ['time', 'duration_time']
+DATA_PATH = '/opt/ByteCamp/'
+DATA_FILE = 'bytecamp.data'
+
+data = pd.read_csv(DATA_PATH+DATA_FILE, sep=',')
+sparse_features = ['uid', 'u_region_id', 'item_id', 'author_id','music_id']
+dense_features = ['duration', 'generate_time']
 
 data[sparse_features] = data[sparse_features].fillna('-1', )
 data[dense_features] = data[dense_features].fillna(0,)
 
-# target = ['finish', 'like']
 target = ['finish', 'like']
+# target = ['finish']
+
+data['generate_time'] %= 60 * 60 * 24
+
+
 
 for feat in sparse_features:
     lbe = LabelEncoder()
@@ -57,14 +63,22 @@ dense_feature_columns = [DenseFeat(feat, 1)  #（特征名， dimension==1） �
 dnn_feature_columns = sparse_feature_columns + dense_feature_columns
 linear_feature_columns = sparse_feature_columns + dense_feature_columns
 
-##['feature1','feature2',...]
+## 这里有多余的步骤，该方法中间为每个特征设置了Input层，但是没有返回，只返回了特征名称list，其实可以直接从上面的两个list合并得到。
 feature_names = get_fixlen_feature_names(linear_feature_columns + dnn_feature_columns)
 
 
-train, test = train_test_split(data, test_size=0.1)
+RIGIONID = 0
+train_indexs = data[(data['date'] < 20190708) & (data['u_region_id']==RIGIONID)].index
 
+
+
+test_indexs = data[(data['date'] == 20190708) & (data['u_region_id']==RIGIONID)].index
+
+
+train, test = data.loc[train_indexs], data.loc[test_indexs]
 
 train_model_input = [train[name] for name in feature_names]
+
 test_model_input = [test[name] for name in feature_names]
 
 
