@@ -52,10 +52,21 @@ linear_feature_columns = sparse_feature_columns + dense_feature_columns
 ## 这里有多余的步骤，该方法中间为每个特征设置了Input层，但是没有返回，只返回了特征名称list，其实可以直接从上面的两个list合并得到。
 feature_names = get_fixlen_feature_names(linear_feature_columns + dnn_feature_columns)
 
+train_indexs = data[data['date'] < 20190708].index
 
-train, test = train_test_split(data, test_size=0.1)
+test_indexs = data[data['date'] == 20190708].index
+
+train, test = data.loc[train_indexs], data.loc[test_indexs]
+
 train_model_input = [train[name] for name in feature_names]
+
 test_model_input = [test[name] for name in feature_names]
+
+RIGIONID = 0
+test_model_input = test_model_input[test_model_input['u_region_id']==RIGIONID]
+
+test = test[test['u_region_id'] == RIGIONID]
+
 
 #model = xDeepFM(linear_feature_columns, dnn_feature_columns, task='binary')
 model = DeepFM(linear_feature_columns, dnn_feature_columns, task='binary',use_fm=False,
@@ -68,6 +79,8 @@ history = model.fit(train_model_input, train[target].values, validation_split=0.
 
 pred_ans = model.predict(test_model_input, batch_size=2**14)
 pred_finish = (pred_ans*2).astype(int)
+
+print('Region ID={}'.format(RIGIONID))
 print("test accuracy", round(accuracy_score(test[target].values, pred_finish), 4))
 print("test LogLoss", round(log_loss(test[target].values, pred_ans), 4))
 print("test AUC", round(roc_auc_score(test[target].values, pred_ans), 4))
