@@ -61,7 +61,7 @@ linear_feature_columns = sparse_feature_columns + dense_feature_columns
 feature_names = get_fixlen_feature_names(linear_feature_columns + dnn_feature_columns)
 
 
-RIGIONID = 1
+RIGIONID = 0
 train_indexs = data[(data['date'] < 20190708) & (data['u_region_id']==RIGIONID)].index
 
 
