@@ -63,7 +63,7 @@ feature_names = get_fixlen_feature_names(linear_feature_columns + dnn_feature_co
 train_indexs = data[data['date'] < 20190708].index
 
 
-RIGIONID = 0
+RIGIONID = 1
 test_indexs = data[(data['date'] == 20190708) & (data['u_region_id']==RIGIONID)].index
 
 
@@ -101,7 +101,7 @@ model.summary()
 plot_model(model, to_file='deepfmMMoEmodel.png', show_shapes=True, show_layer_names=True)
 
 history = model.fit(train_model_input, {"finish_output":train["finish"].values, "like_output":train["like"].values},
-                    batch_size=1024, epochs=10, verbose=1, validation_split=0.2,
+                    batch_size=4096, epochs=10, verbose=1, validation_split=0.2,
                     callbacks = [EarlyStopping(monitor='val_finish_output_auc', patience=2, verbose=1
                     )])
 
