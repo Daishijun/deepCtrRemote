@@ -60,10 +60,12 @@ linear_feature_columns = sparse_feature_columns + dense_feature_columns
 ## 这里有多余的步骤，该方法中间为每个特征设置了Input层，但是没有返回，只返回了特征名称list，其实可以直接从上面的两个list合并得到。
 feature_names = get_fixlen_feature_names(linear_feature_columns + dnn_feature_columns)
 
-train_indexs = data[data['date'] < 20190708].index
-
 
 RIGIONID = 0
+train_indexs = data[(data['date'] < 20190708) & (data['u_region_id']==RIGIONID)].index
+
+
+
 test_indexs = data[(data['date'] == 20190708) & (data['u_region_id']==RIGIONID)].index
 
 
