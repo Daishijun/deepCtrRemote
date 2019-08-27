@@ -62,7 +62,7 @@ feature_names = get_fixlen_feature_names(linear_feature_columns + dnn_feature_co
 
 
 RIGIONID = 0
-train_indexs = data[(data['date'] < 20190708) & (data['u_region_id']==RIGIONID)].index
+train_indexs = data[(data['date'] < 20190705) & (data['u_region_id']==RIGIONID)].index
 
 
 
