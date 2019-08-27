@@ -107,9 +107,9 @@ model.summary()
 
 plot_model(model, to_file='deepfmMMoEmodel.png', show_shapes=True, show_layer_names=True)
 
-history = model.fit(train_model_input, {"finish_output":train["finish"].values, "like_output":train["like"].values},
+history = model.fit(train_model_input, {"finish":train["finish"].values, "like":train["like"].values},
                     batch_size=1024, epochs=10, verbose=1, validation_split=0.2,
-                    callbacks = [EarlyStopping(monitor='val_finish_output_auc', patience=2, verbose=1
+                    callbacks = [EarlyStopping(monitor='val_finish_auc', patience=2, verbose=1
                     )])
 
 pred_ans_finish, pred_ans_like = model.predict(test_model_input, batch_size=2**14)
