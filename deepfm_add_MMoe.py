@@ -18,8 +18,8 @@ from tensorflow.python.keras.layers import Dense
 from tensorflow.python.keras.regularizers import l2
 
 
-# from mmoe import MMoE
-from mymmoe import MMoE
+from mmoe import MMoE
+# from mymmoe import MMoE
 
 def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm=True, only_dnn=False, dnn_hidden_units=(128, 128),
            l2_reg_linear=0.00001, l2_reg_embedding=0.00001, l2_reg_dnn=0, init_std=0.0001, seed=1024, dnn_dropout=0,
@@ -55,22 +55,22 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
                                                                          seed)
     ## [feature_1对应的embedding层，下连接对应feature1的Input[1,]层,...], [feature_1对应的Input[1,]层,...]
 
-    # linear_logit = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
-    #                                 seed=seed, prefix='linear')
+    linear_logit = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
+                                    seed=seed, prefix='linear')
 
-    linear_logit_finish = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
-                                    seed=seed, prefix='linear_finish')
+    # linear_logit_finish = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
+    #                                 seed=seed, prefix='linear_finish')
 
-    linear_logit_like = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
-                                    seed=seed, prefix='linear_like')
+    # linear_logit_like = get_linear_logit(features, linear_feature_columns, l2_reg=l2_reg_linear, init_std=init_std,
+    #                                 seed=seed, prefix='linear_like')
     ## 线性变换层，没有激活函数
 
     fm_input = concat_fun(sparse_embedding_list, axis=1)
     ## 稀疏embedding层concate在一起
 
-    # fm_logit = FM()(fm_input)
-    fm_logit_finish = FM()(fm_input)
-    fm_logit_like = FM()(fm_input)
+    fm_logit = FM()(fm_input)
+    # fm_logit_finish = FM()(fm_input)
+    # fm_logit_like = FM()(fm_input)
 
     ## FM的二次项部分输出，不包含一次项和bias
 
@@ -91,8 +91,8 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
     finish_logit = tf.keras.layers.Dense(1,use_bias=False, activation=None )(finish_out)
 
     like_out_1 = Dense(128, dnn_activation, kernel_regularizer=l2(l2_reg_dnn))(like_in)
-    # like_out = Dense(128, dnn_activation, kernel_regularizer=l2(l2_reg_dnn))(like_out_1)
-    like_logit = tf.keras.layers.Dense(1, use_bias=False, activation=None)(like_out_1)
+    like_out = Dense(128, dnn_activation, kernel_regularizer=l2(l2_reg_dnn))(like_out_1)
+    like_logit = tf.keras.layers.Dense(1, use_bias=False, activation=None)(like_out)
 
 
     dnn_logit = tf.keras.layers.Dense(
@@ -110,8 +110,8 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
     # else:
     #     raise NotImplementedError
 
-    finish_logit = tf.keras.layers.add([linear_logit_finish, fm_logit_finish, finish_logit])
-    like_logit = tf.keras.layers.add([linear_logit_like, fm_logit_like, like_logit])
+    finish_logit = tf.keras.layers.add([linear_logit, fm_logit, finish_logit])
+    like_logit = tf.keras.layers.add([linear_logit, fm_logit, like_logit])
 
 
 
