@@ -31,6 +31,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 DATA_PATH = '/opt/ByteCamp/'
 DATA_FILE = 'bytecamp.data'
 
+CHECKPOINT_ROOT_DIR = './checkpoint/camp'
+
 data = pd.read_csv(DATA_PATH+DATA_FILE, sep=',')
 sparse_features = ['uid', 'u_region_id', 'item_id', 'author_id','music_id']
 dense_features = ['duration', 'generate_time']
@@ -63,27 +65,41 @@ feature_names = get_fixlen_feature_names(linear_feature_columns + dnn_feature_co
 
 
 RIGIONID = 0
-train_indexs = data[(data['date'] < 20190708) & (data['u_region_id']==RIGIONID)].index
+# train_indexs = data[(data['date'] < 20190708) & (data['u_region_id']==RIGIONID)].indexd
 
 
 
-test_indexs = data[(data['date'] == 20190708) & (data['u_region_id']==RIGIONID)].index
+# test_indexs = data[(data['date'] == 20190708) & (data['u_region_id']==RIGIONID)].index
 
+
+# train, test = data.loc[train_indexs], data.loc[test_indexs]
+#
+# train_model_input = [train[name] for name in feature_names]
+#
+# test_model_input = [test[name] for name in feature_names]
+
+train_indexs = data[data['date'] < 20190707].index
+
+test_indexs = data[data['date'] == 20190708].index
+valid_indexs = data[data['date'] == 20190707].index
 
 train, test = data.loc[train_indexs], data.loc[test_indexs]
+valid = data.loc[valid_indexs]
 
 train_model_input = [train[name] for name in feature_names]
-
 test_model_input = [test[name] for name in feature_names]
+valid_model_input = [valid[name] for name in feature_names]
 
 
 
 from tensorflow.python.keras import backend as K
 
-def auc(y_true, y_pred):
-    auc = tf.metrics.auc(y_true, y_pred)[1]
-    K.get_session().run(tf.local_variables_initializer())
-    return auc
+# def auc(y_true, y_pred):
+#     auc = tf.metrics.auc(y_true, y_pred)[1]
+#     K.get_session().run(tf.local_variables_initializer())
+#     return auc
+
+
 
 
 
@@ -101,16 +117,33 @@ model = DeepFM(linear_feature_columns, dnn_feature_columns, task='binary',use_fm
 #     print(e)
 #     print("Training using single GPU or CPU..")
 
-model.compile(Adam(lr=0.0001), "binary_crossentropy", metrics=['binary_crossentropy', auc], loss_weights=[0.6,0.4])
+model.compile(Adam(lr=0.0001), "binary_crossentropy", metrics=['binary_crossentropy', tf.python.keras.metrics.AUC()], loss_weights=[0.6,0.4])
 
 model.summary()
+
+print(model.metrics_names)
+
+checkpoint_path = os.path.join(CHECKPOINT_ROOT_DIR, "deepfmMMoetrain", "deepfmMMoetrain-{epoch:04d}.ckpt")
+checkpoint_dir = os.path.dirname(checkpoint_path)
+
+callbacks = [
+    tf.keras.callbacks.ModelCheckpoint(checkpoint_path, verbose=1, monitor='val_finish_auc',
+                                       save_weights_only=True, save_best_only=True, mode='max'),
+    tf.keras.callbacks.EarlyStopping(monitor='val_finish_auc', patience=2, verbose=1)
+]
 
 plot_model(model, to_file='deepfmMMoEmodel.png', show_shapes=True, show_layer_names=True)
 
 history = model.fit(train_model_input, {"finish":train["finish"].values, "like":train["like"].values},
-                    batch_size=4096, epochs=10, verbose=1, validation_split=0.2,
-                    callbacks = [EarlyStopping(monitor='val_finish_loss', patience=2, verbose=1
-                    )])
+                    batch_size=4096, epochs=10, verbose=1, validation_data=(valid_model_input,
+                                     {"finish": valid["finish"].values, "like": valid["like"].values}),
+                    callbacks =callbacks)
+
+latest = tf.train.latest_checkpoint(checkpoint_dir)
+if latest is not None:
+    model.load_weights(latest)
+    print("load model from %s" % (latest))
+
 
 pred_ans_finish, pred_ans_like = model.predict(test_model_input, batch_size=2**14)
 pred_finish = (pred_ans_finish*2).astype(int)
