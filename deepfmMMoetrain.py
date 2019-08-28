@@ -23,7 +23,7 @@ from tensorflow.python.keras.utils import multi_gpu_model
 from deepfm_add_MMoe import DeepFM
 # from train2modelmmoe import DeepFMmmoe
 from tensorflow.python.keras.utils import plot_model
-
+from tensorflow.python.keras.layers import Lambda
 
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"

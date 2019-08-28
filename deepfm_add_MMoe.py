@@ -16,7 +16,8 @@ from deepctr.layers.interaction import FM
 from deepctr.layers.utils import concat_fun
 from tensorflow.python.keras.layers import Dense
 from tensorflow.python.keras.regularizers import l2
-
+from tensorflow.python.keras.layers import Lambda
+from tensorflow.python.keras.backend import stop_gradient
 
 from mmoe import MMoE
 # from mymmoe import MMoE
@@ -79,7 +80,7 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
     # dnn_out = Dense(128, dnn_activation, l2_reg_dnn, dnn_dropout,
     #               dnn_use_bn, seed)(dnn_input)
 
-    dnn_out = DNN((dnn_hidden_units[0],), dnn_activation, l2_reg_dnn, dnn_dropout,
+    dnn_out = DNN(dnn_hidden_units, dnn_activation, l2_reg_dnn, dnn_dropout,
                   dnn_use_bn, seed)(dnn_input)
     mmoe_out = MMoE(units=16, num_experts=8, num_tasks=2)(dnn_out)
 
@@ -92,7 +93,11 @@ def DeepFM(linear_feature_columns, dnn_feature_columns, embedding_size=8, use_fm
 
     like_out_1 = Dense(128, dnn_activation, kernel_regularizer=l2(l2_reg_dnn))(like_in)
     like_out = Dense(128, dnn_activation, kernel_regularizer=l2(l2_reg_dnn))(like_out_1)
-    like_logit = tf.keras.layers.Dense(1, use_bias=False, activation=None)(like_out)
+
+    finish_logit_stop_grad = Lambda(lambda x: stop_gradient(x))(finish_out)
+    like_out_finish = concat_fun([like_out, finish_logit_stop_grad])
+
+    like_logit = tf.keras.layers.Dense(1, use_bias=False, activation=None)(like_out_finish)
 
 
     dnn_logit = tf.keras.layers.Dense(
