@@ -24,7 +24,7 @@ print(group['like'])
 tmp = group['like'].cumsum()
 print('tmp:', tmp)
 
-count = pd.Series(np.arange(1,len(tmp)))
+count = pd.Series(np.arange(len(tmp))+1)
 
 count.index = tmp.index
 
