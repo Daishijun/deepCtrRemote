@@ -21,7 +21,7 @@ def getlikerate(row, targetID):
     # print(tmpdata.columns)
     tmpdata = tmpdata[tmpdata['uid']==targetID]
     likecounts = tmpdata['like'].value_counts()
-    print(likecounts)
+    # print(likecounts)
     # like_1_num = likecounts[1] if 1 in likecounts.index() else 0
     like_1_num = 0
     # print('likecounts index:', likecounts.index, list(likecounts.index))
@@ -30,7 +30,7 @@ def getlikerate(row, targetID):
 
     try:
         like_1_num = likecounts[1] if 1 in list(likecounts.index) else 0
-        print('like 1 num:',like_1_num)
+        # print('like 1 num:',like_1_num)
         # print('likecount:', likecounts)
     except:
         pass
