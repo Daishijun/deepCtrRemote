@@ -24,6 +24,13 @@ print(group['like'])
 tmp = group['like'].cumsum()
 print('tmp:', tmp)
 
+count = pd.Series(np.arange(1,len(tmp)))
+
+count.index = tmp.index
+
+ratio = tmp/count
+print('ratio:', ratio.to_string())
+
 # def getlikerate(row, targetID):
 #     tmpdata = data.loc[:row+1,:]
 #     # print('tmp data:', tmpdata.to_dense())
