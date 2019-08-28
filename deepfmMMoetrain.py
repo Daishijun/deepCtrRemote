@@ -117,7 +117,7 @@ model = DeepFM(linear_feature_columns, dnn_feature_columns, task='binary',use_fm
 #     print(e)
 #     print("Training using single GPU or CPU..")
 
-model.compile(Adam(lr=0.0001), "binary_crossentropy", metrics=['binary_crossentropy', tf.python.keras.metrics.AUC()], loss_weights=[0.6,0.4])
+model.compile(Adam(lr=0.0001), "binary_crossentropy", metrics=['binary_crossentropy', tf.keras.metrics.AUC()], loss_weights=[0.6,0.4])
 
 model.summary()
 
@@ -129,7 +129,7 @@ checkpoint_dir = os.path.dirname(checkpoint_path)
 callbacks = [
     tf.keras.callbacks.ModelCheckpoint(checkpoint_path, verbose=1, monitor='val_finish_auc',
                                        save_weights_only=True, save_best_only=True, mode='max'),
-    tf.keras.callbacks.EarlyStopping(monitor='val_finish_auc', patience=2, verbose=1)
+    tf.keras.callbacks.EarlyStopping(monitor='val_finish_auc', patience=1, verbose=1)
 ]
 
 plot_model(model, to_file='deepfmMMoEmodel.png', show_shapes=True, show_layer_names=True)
